@@ -11,23 +11,12 @@ namespace Tamagotchi
         [JsonPropertyName("weight")]
 
         public int Weight { get; set; }
+
+        [JsonPropertyName("height")]
+        public int Height { get; set; }
+
         [JsonPropertyName("stats")]
         public List<StatsEntry>? Stats { get; set; }
-
-        [JsonPropertyName("abilities")]
-        public List<AbilityEntry>? Abilities { get; set; }
-    }
-
-    public class AbilityEntry
-    {
-        [JsonPropertyName("ability")]
-        public Ability? Ability { get; set; }
-    }
-
-    public class Ability
-    {
-        [JsonPropertyName("name")]
-        public string? Name { get; set; }
     }
 
     public class StatsEntry
