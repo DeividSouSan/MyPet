@@ -28,9 +28,10 @@ namespace Tamagotchi
             ··················································
             """);
                 Console.WriteLine($"Olá {userName}, escolha uma opção:");
-                Console.WriteLine("1. Adotar");
-                Console.WriteLine("2. Opção 2");
-                Console.WriteLine("3.  Sair");
+                Console.WriteLine("1. Adotar Tamagotchi");
+                Console.WriteLine("2. Ver Tamagotchis");
+                Console.WriteLine("3. Interagir com Tamagtchi");
+                Console.WriteLine("4.  Sair");
 
                 string choice = Console.ReadLine()!;
 
@@ -43,6 +44,9 @@ namespace Tamagotchi
                         VerMascote();
                         break;
                     case "3":
+                        Console.WriteLine("Interagir.");
+                        break;
+                    case "4":
                         return;
                     default:
                         Console.WriteLine("Seleção inválida. Tente novamente.");
@@ -56,14 +60,18 @@ namespace Tamagotchi
 
         public static async Task AdotarMascote()
         {
+            string region = PokemonControl.ChooseRegion();
             Console.WriteLine("Você pode adotar qualquer Pokemons.");
             string pokemon = PokemonControl.GetPokemonName();
 
             try
             {
                 await PokemonControl.SearchPokemon(pokemon);
-                Console.WriteLine($"Pokemon {PokemonControl.mascote?.Name} adotado com sucesso!");
+                
+                Console.WriteLine($"Pokemon {pokemon} adotado com sucesso!");
 
+                Console.Write($"Qual o apelido do {pokemon}: ");
+                PokemonControl.nickname = Console.ReadLine()!;
             }
             catch
             {
