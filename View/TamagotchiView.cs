@@ -33,6 +33,7 @@ namespace Tamagotchi
                 Console.WriteLine("3. Interagir com Tamagtchi");
                 Console.WriteLine("4.  Sair");
 
+                Console.Write(">> ");
                 string choice = Console.ReadLine()!;
 
                 switch (choice)
@@ -60,14 +61,28 @@ namespace Tamagotchi
 
         public static async Task AdotarMascote()
         {
-            string region = PokemonControl.ChooseRegion();
-            Console.WriteLine("Você pode adotar qualquer Pokemons.");
-            string pokemon = PokemonControl.GetPokemonName();
+            string pokemon;
+            try
+            {
+                Console.WriteLine("Digite o nome da região:  ");
+                foreach (var item in PokemonControl.regions) Console.WriteLine($"{item.Key} - {item.Value}");
+
+                Console.Write(">> ");
+                string region = Console.ReadLine()!; // muitas exceções, não pode ser número, não pode não estar no dicionário
+
+                bool isNumber = int.TryParse(region, out int num);
+                if (isNumber == true) throw new Exception("Valor não pode ser número");
+
+                Console.WriteLine($"Iniciais de {region}: {PokemonControl.ChooseRegionStarter(region)}");
+                Console.Write("Digite o nome do pokemon que você quer adotar: ");
+                pokemon = Console.ReadLine()!; ;
+            }
+            catch (Exception err) { Console.WriteLine($"Erro {err}! Voltando ao início."); return; };
 
             try
             {
                 await PokemonControl.SearchPokemon(pokemon);
-                
+
                 Console.WriteLine($"Pokemon {pokemon} adotado com sucesso!");
 
                 Console.Write($"Qual o apelido do {pokemon}: ");
@@ -82,7 +97,17 @@ namespace Tamagotchi
         public static void VerMascote()
         {
             Console.WriteLine("Você pode ver todos os Pokemons adotados.");
-            PokemonControl.ShowPokemon();
+            if (PokemonControl.nickname == "") Console.WriteLine($"Nome: {PokemonControl.mascote?.Name?.ToUpper()}");
+            else Console.WriteLine($"Nome: {PokemonControl.nickname} ({PokemonControl.mascote?.Name?.ToUpper()})");
+
+            Console.WriteLine($""" 
+            Peso: {PokemonControl.mascote!.Weight}
+            Altura: {PokemonControl.mascote!.Height}
+            {PokemonControl.mascote!.Stats![0].Stat!.Name!.ToUpper()}:  {PokemonControl.mascote!.Stats![0].BaseStat}
+            Anos de Vida: {PokemonControl.mascote!.age}
+
+            """);
+
         }
     }
 }
