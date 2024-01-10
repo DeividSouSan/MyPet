@@ -12,16 +12,8 @@ namespace Pokemon
     {
         public static PokemonModel? mascote;
         public static string nickname = "";
-        public static string GetPokemonName()
-        {
-            Console.Write("Digite o nome do pokemon: ");
-            string pokemon = Console.ReadLine()!.ToLower();
-            return pokemon;
-        }
 
-        public static string ChooseRegion()
-        {
-            Dictionary<int, string> regions = new Dictionary<int, string>()
+        public static Dictionary<int, string> regions = new Dictionary<int, string>()
             {
                 {1, "Kanto"},
                 {2, "Johto"},
@@ -30,32 +22,21 @@ namespace Pokemon
                 {5, "Unova"},
                 {6, "Kalos"},
             };
-
-            Console.WriteLine("Escolha uma região: ");
-            foreach (var item in regions)
-            {
-                Console.WriteLine($"{item.Key} - {item.Value}");
-            }
-
-            string region = Console.ReadLine()!;
-            return region;
-        }
-
-        public static string ChooseRegionInitial(string region)
+        public static string ChooseRegionStarter(string region)
         {
             region = region.ToLower();
 
-            Dictionary<string, string> regions = new Dictionary<string, string>()
+            Dictionary<string, string> starters = new()
             {
                 {"kanto", "1 - Bulbasaur 2 - Squirtle 3 - Charmander"},
-                {"johto", "Johto"},
-                {"hoenn", "Hoenn"},
-                {4, "Sinnoh"},
-                {5, "Unova"},
-                {6, "Kalos"},
+                {"johto", "1 - Totodile | 2 - Chicorita | 3 - Cyndaquil"},
+                {"hoenn", "1 - Mudkip | 2 - Treecko | 3 - Torchic"},
+                {"sinnoh", "1 - Piplup | 2 - Turtwig | 3 - Chimchar"},
+                {"unova", "1 - Oshwatt | 2 - Snivy | 3 - Tepig"},
+                {"kalos", "1 - Chespin | 2 - Froakie | 3 - Fennekin"},
             };
 
-            return regions[region];
+            return starters[region];
         }
         public static async Task SearchPokemon(string pokemon)
         {
@@ -76,19 +57,5 @@ namespace Pokemon
             }
 
         }
-
-        public static void ShowPokemon()
-        {
-            if (nickname == "") Console.WriteLine($"Nome: {mascote?.Name?.ToUpper()}");
-            else Console.WriteLine($"Nome: {nickname} ({mascote?.Name?.ToUpper()})");
-
-            Console.WriteLine($""" 
-            Peso: {mascote!.Weight}
-            Altura: {mascote!.Height}
-            {mascote!.Stats![0].Stat!.Name!.ToUpper()}:  {mascote!.Stats![0].BaseStat}
-            """);
-        }
-
-
     }
 }
