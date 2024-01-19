@@ -85,7 +85,7 @@ namespace Pet
 
         public static async Task AdoptPet()
         {
-            string pet;
+            string? pet;
 
             try
             {
@@ -94,24 +94,17 @@ namespace Pet
             }
             catch (Exception err) { Console.WriteLine($"Erro: {err.Message}! Voltando ao início."); return; };
 
-            while (true) {
-
-                try
-                {
-                    pet = pet.ToLower();
-                    Console.WriteLine(pet);
-                    await PetController.SearchPet(pet);
-                }
-                catch (Exception err)
-                {
-                    Console.WriteLine($"Erro: {err.Message}!");
-                    Console.Write("Continuar tentando? [s/n]");
-                    string ans = Console.ReadLine()!;
-
-                    if (ans == "s") continue;
-                    else return;
-                }
+            try
+            {
+                Console.WriteLine(pet);
+                await PetController.SearchPet(pet);
             }
+            catch (Exception err)
+            {
+                Console.WriteLine($"Erro: {err.Message}!");
+                Console.Write("Continuar tentando? [s/n]: ");
+            }
+
             Console.WriteLine($"Pet {pet} adotado com sucesso!");
 
             currentPet = PetController.currentPet!;
