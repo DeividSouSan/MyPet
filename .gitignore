@@ -12,7 +12,7 @@
 *.user
 *.userosscache
 *.sln.docstates
-pokemonData.json
+petData.json
 regras.txt
 
 # User-specific files (MonoDevelop/Xamarin Studio)
