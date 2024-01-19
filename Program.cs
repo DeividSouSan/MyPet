@@ -1,4 +1,7 @@
-﻿using Tamagotchi;
+﻿using Pokemon;
+using Tamagotchi;
 
 var Menu = new TamagotchiMenu();
-await Menu.ShowMenu();
+Menu.GetUserName();
+Menu.LoadPokemon();
+await Menu.StartGame();
