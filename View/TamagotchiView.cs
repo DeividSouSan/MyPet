@@ -1,20 +1,16 @@
 
-using Pokemon;
-using Tamagotchi;
-using System.Timers;
-
-namespace Tamagotchi
+namespace Pet
 {
-    public class TamagotchiMenu
+    public class UserInterface
     {
-        private static string username;
-        private static PokemonModel currentPokemon;
-        private System.Timers.Timer updatePStatusTimer;
+        private static string? username;
+        private static PetModel? currentPet;
+        private readonly System.Timers.Timer updatePStatusTimer;
 
-        public TamagotchiMenu()
+        public UserInterface()
         {
             updatePStatusTimer = new System.Timers.Timer(10000); // 10 segundos
-            updatePStatusTimer.Elapsed += PokemonControl.UpdatePokemonStats;
+            updatePStatusTimer.Elapsed += PetController.UpdatePokemonStats!;
             updatePStatusTimer.AutoReset = true;
             updatePStatusTimer.Enabled = true;
         }
@@ -25,16 +21,16 @@ namespace Tamagotchi
             username = Console.ReadLine()!;
         }
 
-        public void LoadPokemon()
+        public void LoadPet()
         {
-            bool pokemonFileExists = PokemonControl.LoadPokemon();
+            bool saveFileExists = PetController.LoadPokemon();
 
-            if (pokemonFileExists)
+            if (saveFileExists)
             {
-                Console.Write("Arquivo de Pokemon encontrado. Carregar? [s/n]");
-                string resposta = Console.ReadLine()!;
+                Console.Write("Arquivo de Pet encontrado. Carregar? [s/n]");
+                string ans = Console.ReadLine()!;
 
-                if (resposta == "s") currentPokemon = PokemonControl.currentPokemon!;
+                if (ans == "s") currentPet = PetController.currentPet!;
             }
         }
 
@@ -44,15 +40,17 @@ namespace Tamagotchi
             {
                 Console.Clear();
                 Console.WriteLine("""
-            ··················································
-            : _____ _   __  __   _   ___  ___   ___ _  _ ___ :
-            :|_   _/_\ |  \/  | /_\ / __|/ _ \ / __| || |_ _|:
-            :  | |/ _ \| |\/| |/ _ \ (_ | (_) | (__| __ || | :
-            :  |_/_/ \_\_|  |_/_/ \_\___|\___/ \___|_||_|___|:
-            ··················································
+            .----------------------------.
+            | __  __       ____      _   |
+            ||  \/  |_   _|  _ \ ___| |_ |
+            || |\/| | | | | |_) / _ \ __||
+            || |  | | |_| |  __/  __/ |_ |
+            ||_|  |_|\__, |_|   \___|\__||
+            |        |___/               |
+            '----------------------------'
             """);
                 Console.WriteLine($"Olá {username}, escolha uma opção:");
-                Console.WriteLine("1. Adotar Tamagotchi");
+                Console.WriteLine("1. Adotar Pet");
                 Console.WriteLine("2. Ver Tamagotchis");
                 Console.WriteLine("3. Interagir com Tamagtchi");
                 Console.WriteLine("4.  Sair");
@@ -72,8 +70,8 @@ namespace Tamagotchi
                         Interact();
                         break;
                     case "4":
-                        var pet = PokemonControl.currentPokemon!;
-                        PokemonControl.SavePokemon(pet);
+                        var pet = PetController.currentPet!;
+                        PetController.SavePokemon(pet);
                         return;
                     default:
                         Console.WriteLine("Seleção inválida. Tente novamente.");
@@ -87,34 +85,36 @@ namespace Tamagotchi
 
         public static async Task AdotarMascote()
         {
-            string pokemon;
+            string pet;
             try
             {
+                // Selecionando a região
                 Console.WriteLine("Digite o nome da região:  ");
-                foreach (var item in PokemonControl.regions) Console.WriteLine($"- {item[0].ToString().ToUpper()}{item.Substring(1)}");
+                foreach (var item in PetController.regions) Console.WriteLine($"- {item[0].ToString().ToUpper()}{item[1..]}");
 
                 string region = GetRegion();
 
+                // Selecionando o pet
                 Console.WriteLine($"Iniciais de {region}:");
-                foreach (string starter in PokemonControl.GetRegionStarter(region)) Console.WriteLine($"- {starter}");
+                foreach (string starter in PetController.GetRegionStarter(region)) Console.WriteLine($"- {starter}");
 
-                pokemon = GetPokemon(region); ;
+                pet = GetPokemon(region); ;
             }
             catch (Exception err) { Console.WriteLine($"Erro: {err.Message}! Voltando ao início."); return; };
 
             try
             {
-                pokemon = pokemon.ToLower();
-                await PokemonControl.SearchPokemon(pokemon);
+                pet = pet.ToLower();
+                await PetController.SearchPet(pet);
             }
             catch (Exception err) { Console.WriteLine($"Erro: {err}!"); return; }
 
-            Console.WriteLine($"Pokemon {pokemon} adotado com sucesso!");
+            Console.WriteLine($"Pet {pet} adotado com sucesso!");
 
-            currentPokemon = PokemonControl.currentPokemon!;
+            currentPet = PetController.currentPet!;
 
-            Console.Write($"Qual o apelido do {pokemon}: ");
-            currentPokemon.nickname = Console.ReadLine()!;
+            Console.Write($"Qual o apelido do {pet}: ");
+            currentPet.nickname = Console.ReadLine()!;
 
         }
 
@@ -123,7 +123,7 @@ namespace Tamagotchi
             Console.Write(">> ");
             string region = Console.ReadLine()!.ToLower();
 
-            if (PokemonControl.regions.Contains(region!)) return region;
+            if (PetController.regions.Contains(region!)) return region;
             else throw new Exception("Região inválida");
         }
 
@@ -132,13 +132,13 @@ namespace Tamagotchi
             Console.Write("Digite o nome do pokemon que você quer adotar: ");
             string pokemon = Console.ReadLine()!;
 
-            if (PokemonControl.GetRegionStarter(region).Contains(pokemon!)) return pokemon;
+            if (PetController.GetRegionStarter(region).Contains(pokemon!)) return pokemon;
             else throw new Exception("Pokemon inválido");
         }
         public static void VerMascote()
         {
 
-            if (currentPokemon == null)
+            if (currentPet == null)
             {
                 Console.WriteLine("Você ainda não tem mascote!");
                 return;
@@ -146,16 +146,16 @@ namespace Tamagotchi
 
             Console.WriteLine("Você pode ver todos os Pokemons adotados.");
 
-            if (currentPokemon.nickname == "") Console.WriteLine($"Nome: {currentPokemon.Name?.ToUpper()}");
-            else Console.WriteLine($"Nome: {currentPokemon.nickname} ({currentPokemon.Name?.ToUpper()})");
+            if (currentPet.nickname == "") Console.WriteLine($"Nome: {currentPet.Name?.ToUpper()}");
+            else Console.WriteLine($"Nome: {currentPet.nickname} ({currentPet.Name?.ToUpper()})");
 
             Console.WriteLine($""" 
-            Vida:  {currentPokemon.Stats![0].BaseStat}
-            Felicidade: {HappinesStatus(currentPokemon.happiness)} {currentPokemon.happiness}
-            Anos de Vida: {currentPokemon.age}
+            Vida:  {currentPet.Stats![0].BaseStat}
+            Felicidade: {HappinesStatus(currentPet.happiness)} {currentPet.happiness}
+            Anos de Vida: {currentPet.age}
 
-            Peso: {currentPokemon.Weight}
-            Altura: {currentPokemon.Height}
+            Peso: {currentPet.Weight}
+            Altura: {currentPet.Height}
 
             """);
         }
@@ -173,7 +173,7 @@ namespace Tamagotchi
 
         public static void Interact()
         {
-            Console.WriteLine($"Escolha uma atividade para fazer com {currentPokemon.nickname}.");
+            Console.WriteLine($"Escolha uma atividade para fazer com {currentPet.nickname}.");
 
             Console.WriteLine("""
             1 - Ir ao PokePark

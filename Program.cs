@@ -1,7 +1,6 @@
-﻿using Pokemon;
-using Tamagotchi;
+﻿using Pet;
 
-var Menu = new TamagotchiMenu();
+var Menu = new UserInterface();
 Menu.GetUserName();
-Menu.LoadPokemon();
+Menu.LoadPet();
 await Menu.StartGame();

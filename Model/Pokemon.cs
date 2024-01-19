@@ -1,8 +1,8 @@
 using System.Text.Json.Serialization;
 
-namespace Tamagotchi
+namespace Pet
 {
-    public class PokemonModel
+    public class PetModel
     {
 
         [JsonPropertyName("name")]
