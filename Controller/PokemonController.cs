@@ -35,8 +35,7 @@ namespace Pet
         public static async Task SearchPet(string pet)
         {
             var client = new RestClient("https://pokeapi.co/api/v2/");
-
-            var request = new RestRequest($"pokemon/{pet}", Method.Get) { Timeout = 200000 };
+            var request = new RestRequest($"pokemon/{pet}", Method.Get) { Timeout = 5000 };
             var response = await client.GetAsync(request);
 
             currentPet = System.Text.Json.JsonSerializer.Deserialize<PetModel>(response.Content!);
@@ -80,8 +79,6 @@ namespace Pet
 
             Math.Clamp(currentPet.starvation, 0, 100);
             Math.Clamp(currentPet.happiness, 0, 100);
-
-            Console.WriteLine("passou 10 segundos");
         }
         public static void SavePokemon(PetModel pet)
         {
