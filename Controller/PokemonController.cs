@@ -80,10 +80,15 @@ namespace Pet
             Math.Clamp(currentPet.starvation, 0, 100);
             Math.Clamp(currentPet.happiness, 0, 100);
         }
-        public static void SavePokemon(PetModel pet)
+        public static bool SavePokemon(PetModel pet)
         {
-            var petData = JsonConvert.SerializeObject(pet);
-            File.WriteAllText("petData.json", petData);
+            if (pet != null)
+            {
+                var petData = JsonConvert.SerializeObject(pet);
+                File.WriteAllText("petData.json", petData);
+                return true;
+            }
+            else return false;
         }
 
         public static bool LoadPokemon()
@@ -94,10 +99,7 @@ namespace Pet
                 currentPet = JsonConvert.DeserializeObject<PetModel>(dataFromFile);
                 return true;
             }
-            catch
-            {
-                return false;
-            }
+            catch { return false; }
         }
     }
 }
