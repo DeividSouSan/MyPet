@@ -18,7 +18,12 @@ namespace Tamagotchi
         [JsonPropertyName("stats")]
         public List<StatsEntry>? Stats { get; set; }
 
+        public string nickname = "";
         public int age = 0;
+        public int starvation = 50;
+        public int happiness = 50;
+        public bool alive = true;
+        public int xp = 0;
     }
 
     public class StatsEntry
