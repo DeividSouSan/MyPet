@@ -1,39 +1,34 @@
 using Tamagotchi;
 using RestSharp;
-using System.Text.Json;
-using System.Collections.Generic;
-using System.Reflection.Metadata.Ecma335;
-using System.Runtime.CompilerServices;
-
+using Newtonsoft.Json;
+using System.Timers;
 
 namespace Pokemon
 {
     public class PokemonControl
     {
-        public static PokemonModel? mascote;
-        public static string nickname = "";
+        public static PokemonModel? currentPokemon;
+        public static List<string> regions = new() {
+            { "kanto" },
+            { "johto" },
+            { "hoenn" },
+            { "sinnoh" },
+            { "unova" },
+            { "kalos" }
+        };
 
-        public static Dictionary<int, string> regions = new Dictionary<int, string>()
-            {
-                {1, "Kanto"},
-                {2, "Johto"},
-                {3, "Hoenn"},
-                {4, "Sinnoh"},
-                {5, "Unova"},
-                {6, "Kalos"},
-            };
-        public static string ChooseRegionStarter(string region)
+        public static List<string> GetRegionStarter(string region)
         {
             region = region.ToLower();
 
-            Dictionary<string, string> starters = new()
+            Dictionary<string, List<string>> starters = new()
             {
-                {"kanto", "1 - Bulbasaur 2 - Squirtle 3 - Charmander"},
-                {"johto", "1 - Totodile | 2 - Chicorita | 3 - Cyndaquil"},
-                {"hoenn", "1 - Mudkip | 2 - Treecko | 3 - Torchic"},
-                {"sinnoh", "1 - Piplup | 2 - Turtwig | 3 - Chimchar"},
-                {"unova", "1 - Oshwatt | 2 - Snivy | 3 - Tepig"},
-                {"kalos", "1 - Chespin | 2 - Froakie | 3 - Fennekin"},
+                {"kanto", new List<string> {"Bulbasaur","Squirtle","Charmander"} },
+                {"johto", new List<string> {"Totodile","Chicorita","Cyndaquil"} },
+                {"hoenn", new List<string> {"Mudkip","Treecko","Torchic"} },
+                {"sinnoh",new List<string> { "Piplup","Turtwig","Chimchar"} },
+                {"unova", new List<string> {"Oshwatt","Snivy","Tepig"} },
+                {"kalos", new List<string> {"Chespin", "Froakie", "Fennekin"}},
             };
 
             return starters[region];
@@ -42,20 +37,72 @@ namespace Pokemon
         {
             var client = new RestClient("https://pokeapi.co/api/v2/");
 
+            var request = new RestRequest($"pokemon/{pokemon}", Method.Get) { Timeout = 200000 };
+            var response = await client.GetAsync(request);
+
+            currentPokemon = System.Text.Json.JsonSerializer.Deserialize<PokemonModel>(response.Content!);
+        }
+
+
+        public static void PlayWithPet(int maxHappinessPoint, int maxXpPoint)
+        {
+            Console.WriteLine("Masocte tal");
+            if (currentPokemon!.happiness == 1.0)
+            {
+                return;
+            }
+            else if (currentPokemon.happiness > 1.0)
+            {
+                currentPokemon.happiness = 1;
+
+            }
+            else
+            {
+                Random xpRandom = new();
+                int xpPoints = xpRandom.Next(maxXpPoint);
+                currentPokemon.xp += xpPoints;
+
+                Random happinessRandom = new();
+                int happinessPoints = happinessRandom.Next(maxHappinessPoint);
+                currentPokemon.happiness += happinessPoints;
+            }
+        }
+
+        public static void UpdatePokemonStats(Object source, ElapsedEventArgs e)
+        {
+            bool pokemonIsDead = currentPokemon!.starvation == 100 | currentPokemon.happiness == 0;
+            if (pokemonIsDead)
+            {
+                File.Delete("pokemonData.json");
+                Environment.Exit(0);
+            }
+
+            currentPokemon!.starvation += 5;
+            currentPokemon.happiness += 5;
+
+            Math.Clamp(currentPokemon.starvation, 0, 100);
+            Math.Clamp(currentPokemon.happiness, 0, 100);
+
+            Console.WriteLine("passou 10 segundos");
+        }
+        public static void SavePokemon(PokemonModel pet)
+        {
+            var pokemonData = JsonConvert.SerializeObject(pet);
+            File.WriteAllText("pokemonData.json", pokemonData);
+        }
+
+        public static bool LoadPokemon()
+        {
             try
             {
-                Console.WriteLine($"Buscando pokemon: {pokemon}");
-                var request = new RestRequest($"pokemon/{pokemon}", Method.Get) { Timeout = 5000 };
-                var response = await client.GetAsync(request);
-                mascote = JsonSerializer.Deserialize<PokemonModel>(response.Content!);
-                Console.WriteLine("Pokemon encontrado!");
+                string dataFromFile = File.ReadAllText("pokemonData.json");
+                currentPokemon = JsonConvert.DeserializeObject<PokemonModel>(dataFromFile);
+                return true;
             }
             catch
             {
-                Console.WriteLine("Erro ao acessar a API do Pokemon!");
-                throw new Exception("Erro ao acessar a API do Pokemon!");
+                return false;
             }
-
         }
     }
 }
