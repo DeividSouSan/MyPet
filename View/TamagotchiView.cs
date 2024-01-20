@@ -7,7 +7,7 @@ namespace Pet
         private static PetModel? currentPet;
         private readonly System.Timers.Timer updatePStatusTimer;
 
-        public UserInterface()
+        private UserInterface()
         {
             updatePStatusTimer = new System.Timers.Timer(10000); // 10 segundos
             updatePStatusTimer.Elapsed += PetController.UpdatePokemonStats!;
@@ -83,7 +83,7 @@ namespace Pet
             }
         }
 
-        public static async Task AdoptPet()
+        private static async Task AdoptPet()
         {
             string? pet;
 
@@ -113,7 +113,7 @@ namespace Pet
             currentPet.nickname = Console.ReadLine()!;
         }
 
-        public static string GetRegion()
+        private static string GetRegion()
         {
             Console.WriteLine("Digite o nome da região:  ");
             foreach (var item in PetController.regions) Console.WriteLine($"- {item[0].ToString().ToUpper()}{item[1..]}");
@@ -125,7 +125,7 @@ namespace Pet
             else throw new Exception("Região inválida");
         }
 
-        public static string GetPet(string region)
+        private static string GetPet(string region)
         {
             Console.WriteLine($"Iniciais de {region}:");
             foreach (string starter in PetController.GetRegionStarter(region))
@@ -138,7 +138,7 @@ namespace Pet
             if (PetController.GetRegionStarter(region).Contains(pet)) return pet;
             else throw new Exception("Pet inválido");
         }
-        public static void ShowPet()
+        private static void ShowPet()
         {
             if (currentPet == null)
             {
@@ -166,10 +166,7 @@ namespace Pet
 
             """);
         }
-
-
-
-        public static string HappinesStatus(double happinesLevel)
+        private static string HappinesStatus(double happinesLevel)
         {
             if (happinesLevel < 0.2) return "Muito triste";
             else if (happinesLevel < 0.4) return "Triste";
@@ -178,7 +175,7 @@ namespace Pet
             else return "Muito Feliz";
         }
 
-        public static void Interact()
+        private static void Interact()
         {
             Console.WriteLine($"Escolha uma atividade para fazer com {currentPet.nickname}.");
 
