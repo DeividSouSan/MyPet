@@ -1,12 +1,15 @@
 using RestSharp;
 using Newtonsoft.Json;
 using System.Timers;
+using System.Reflection;
 
 namespace Pet
 {
     public class PetController
     {
         public static PetModel? currentPet;
+
+
         public static List<string> regions = new() {
             { "kanto" },
             { "johto" },
@@ -25,7 +28,7 @@ namespace Pet
                 {"kanto", new List<string> {"bulbasaur","squirtle","charmander"} },
                 {"johto", new List<string> {"totodile","chicorita","cyndaquil"} },
                 {"hoenn", new List<string> {"mudkip","treecko","torchic"} },
-                {"sinnoh",new List<string> { "Piplup","Turtwig","Chimchar"} },
+                {"sinnoh",new List<string> { "piplup","turtwig","chimchar"} },
                 {"unova", new List<string> {"oshwatt","snivy","tepig"} },
                 {"kalos", new List<string> {"chespin", "froakie", "fennekin"}},
             };
@@ -64,21 +67,41 @@ namespace Pet
                 currentPet.happiness += happinessPoints;
             }
         }
-
-        public static void UpdatePokemonStats(Object source, ElapsedEventArgs e)
+        // Ineficiente de mais, para manutenção meu deus!
+        public static Action UpdateStat(string stat, int tax)
         {
-            bool petIsDead = currentPet!.starvation == 100 | currentPet.happiness == 0;
-            if (petIsDead)
+            Dictionary<string, Action> Update = new()
+            {
+                ["starvation"] = () => currentPet.starvation += tax,
+                ["happiness"] = () => currentPet.happiness += tax,
+            };
+
+            return Update[stat];
+        }
+
+
+        public static void CheckAndHandleDeath()
+        {
+            if (currentPet!.starvation == 100 | currentPet.happiness == 0)
             {
                 File.Delete("petData.json");
                 Environment.Exit(0);
             }
+        }
+        public static void UpdatePetStats(Object source, ElapsedEventArgs e)
+        {
+            // Erros gerados pelos eventos são suprimidos 
 
-            currentPet!.starvation += 5;
-            currentPet.happiness += 5;
+            CheckAndHandleDeath();
 
-            Math.Clamp(currentPet.starvation, 0, 100);
-            Math.Clamp(currentPet.happiness, 0, 100);
+            var updateStarvation = UpdateStat("starvation", 5);
+            updateStarvation();
+            
+            var updateHappiness = UpdateStat("happiness", 5);
+            updateHappiness();
+
+
+            Console.WriteLine("Passou 10s.");
         }
         public static bool SavePokemon(PetModel pet)
         {
