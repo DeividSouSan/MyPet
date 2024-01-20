@@ -4,15 +4,15 @@ namespace Pet
     public class UserInterface
     {
         private static string? username;
-        private static PetModel? currentPet;
-        private readonly System.Timers.Timer updatePStatusTimer;
+        private static PetModel? currentPet = null;
+        private static System.Timers.Timer updatePStatusTimer;
 
-        private UserInterface()
+        public UserInterface()
         {
             updatePStatusTimer = new System.Timers.Timer(10000); // 10 segundos
-            updatePStatusTimer.Elapsed += PetController.UpdatePokemonStats!;
+            updatePStatusTimer.Elapsed += PetController.UpdatePetStats!;
             updatePStatusTimer.AutoReset = true;
-            updatePStatusTimer.Enabled = true;
+            updatePStatusTimer.Enabled = false;
         }
 
         public void GetUserName()
@@ -30,12 +30,16 @@ namespace Pet
                 Console.Write("Arquivo de Pet encontrado. Carregar? [s/n]");
                 string ans = Console.ReadLine()!;
 
-                if (ans == "s") currentPet = PetController.currentPet!;
+                if (ans == "s")
+                {
+                    currentPet = PetController.currentPet!;
+                    updatePStatusTimer.Start();
+                }
             }
         }
-
         public async Task StartGame()
         {
+
             while (true)
             {
                 Console.Clear();
@@ -53,7 +57,7 @@ namespace Pet
                 Console.WriteLine("1. Adotar Pet");
                 Console.WriteLine("2. Ver Tamagotchis");
                 Console.WriteLine("3. Interagir com Tamagtchi");
-                Console.WriteLine("4.  Sair");
+                Console.WriteLine("4. Sair");
 
                 Console.Write(">> ");
                 string choice = Console.ReadLine()!;
@@ -102,7 +106,6 @@ namespace Pet
             catch (Exception err)
             {
                 Console.WriteLine($"Erro: {err.Message}!");
-                Console.Write("Continuar tentando? [s/n]: ");
             }
 
             Console.WriteLine($"Pet {pet} adotado com sucesso!");
@@ -111,6 +114,8 @@ namespace Pet
 
             Console.Write($"Qual o apelido do {pet}: ");
             currentPet.nickname = Console.ReadLine()!;
+
+            updatePStatusTimer.Start();
         }
 
         private static string GetRegion()
@@ -168,15 +173,22 @@ namespace Pet
         }
         private static string HappinesStatus(double happinesLevel)
         {
-            if (happinesLevel < 0.2) return "Muito triste";
-            else if (happinesLevel < 0.4) return "Triste";
-            else if (happinesLevel < 0.6) return "Normal";
-            else if (happinesLevel < 0.8) return "Feliz";
+            if (happinesLevel < 20) return "Muito triste";
+            else if (happinesLevel < 40) return "Triste";
+            else if (happinesLevel < 60) return "Normal";
+            else if (happinesLevel < 80) return "Feliz";
             else return "Muito Feliz";
         }
 
         private static void Interact()
         {
+            if (currentPet == null)
+            {
+                Console.WriteLine("Você ainda não possui pet. Adote um primeiro!");
+                return;
+            }
+
+
             Console.WriteLine($"Escolha uma atividade para fazer com {currentPet.nickname}.");
 
             Console.WriteLine("""
@@ -186,7 +198,7 @@ namespace Pet
             """);
 
             Console.Write(">> ");
-            int op = int.Parse(Console.ReadLine());
+            int op = int.Parse(Console.ReadLine()!);
 
             switch (op)
             {
@@ -199,4 +211,3 @@ namespace Pet
 
     }
 }
-
