@@ -89,7 +89,7 @@ namespace Pet
             catch (Exception err) { Console.WriteLine($"Erro: {err.Message}! Voltando ao início."); return; };
 
             try { await PetController.SearchPet(pet); }
-            catch (Exception err) { Console.WriteLine($"Erro: {err.Message}!"); return;}
+            catch (Exception err) { Console.WriteLine($"Erro: {err.Message}!"); return; }
 
             Console.WriteLine($"Pet {pet} adotado com sucesso!");
             currentPet = PetController.currentPet!;
@@ -129,7 +129,7 @@ namespace Pet
             if (PetController.GetPet("starters", region).Contains(pet)) return pet;
             else throw new Exception("Pet inválido");
         }
-        
+
         private static void ShowPet()
         {
             if (currentPet == null)
@@ -179,7 +179,7 @@ namespace Pet
             else if (starvationLevel < 80) return "Com fome";
             else return "Faminto";
         }
-        
+
         private static void Interact()
         {
             if (currentPet == null)
@@ -192,9 +192,12 @@ namespace Pet
             Console.WriteLine($"Escolha uma atividade para fazer com {currentPet.nickname}.");
 
             Console.WriteLine("""
-            1 - Ir ao PokePark
-            2 - Fazer uma Batalha Pokemon
-            3 - Alimentar
+            1. Alimentar
+            2. Dar banho
+            3. Colocar para dormir
+            4. Passear no parque
+            5. Treinar
+            
             """);
 
             Console.Write(">> ");
