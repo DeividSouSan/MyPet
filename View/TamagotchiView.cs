@@ -5,7 +5,7 @@ namespace Pet
     {
         private static string? username;
         private static PetModel? currentPet = null;
-        private static System.Timers.Timer updatePStatusTimer;
+        private static System.Timers.Timer? updatePStatusTimer;
 
         public UserInterface()
         {
@@ -28,54 +28,48 @@ namespace Pet
             if (saveFileExists)
             {
                 Console.Write("Arquivo de Pet encontrado. Carregar? [s/n]");
-                string ans = Console.ReadLine()!;
+                string retrieveSaveFile = Console.ReadLine()!;
 
-                if (ans == "s")
+                if (retrieveSaveFile == "s")
                 {
                     currentPet = PetController.currentPet!;
-                    updatePStatusTimer.Start();
+                    updatePStatusTimer!.Start();
                 }
             }
         }
         public async Task StartGame()
         {
-
             while (true)
             {
                 Console.Clear();
-                Console.WriteLine("""
-            .----------------------------.
-            | __  __       ____      _   |
-            ||  \/  |_   _|  _ \ ___| |_ |
-            || |\/| | | | | |_) / _ \ __||
-            || |  | | |_| |  __/  __/ |_ |
-            ||_|  |_|\__, |_|   \___|\__||
-            |        |___/               |
-            '----------------------------'
-            """);
-                Console.WriteLine($"Olá {username}, escolha uma opção:");
-                Console.WriteLine("1. Adotar Pet");
-                Console.WriteLine("2. Ver Tamagotchis");
-                Console.WriteLine("3. Interagir com Tamagtchi");
-                Console.WriteLine("4. Sair");
-
-                Console.Write(">> ");
+                Console.WriteLine(
+                """
+                .----------------------------.
+                | __  __       ____      _   |
+                ||  \/  |_   _|  _ \ ___| |_ |
+                || |\/| | | | | |_) / _ \ __||
+                || |  | | |_| |  __/  __/ |_ |
+                ||_|  |_|\__, |_|   \___|\__||
+                |        |___/               |
+                '----------------------------'
+                """);
+                Console.Write($"""
+                Olá {username}, escolha uma opção:
+                1. Adotar Pet
+                2. Ver Tamagotchis
+                3. Interagir com Tamagtchi
+                4. Sair
+                >> 
+                """);
                 string choice = Console.ReadLine()!;
 
                 switch (choice)
                 {
-                    case "1":
-                        await AdoptPet();
-                        break;
-                    case "2":
-                        ShowPet();
-                        break;
-                    case "3":
-                        Interact();
-                        break;
+                    case "1": await AdoptPet(); break;
+                    case "2": ShowPet(); break;
+                    case "3": Interact(); break;
                     case "4":
-                        var pet = PetController.currentPet!;
-                        PetController.SavePokemon(pet);
+                        PetController.SavePokemon(currentPet!);
                         return;
                     default:
                         Console.WriteLine("Seleção inválida. Tente novamente.");
@@ -89,60 +83,53 @@ namespace Pet
 
         private static async Task AdoptPet()
         {
-            string? pet;
+            string? pet, region;
 
-            try
-            {
-                string region = GetRegion();
-                pet = GetPet(region); ;
-            }
+            try { region = GetRegion(); pet = GetPet(region); }
             catch (Exception err) { Console.WriteLine($"Erro: {err.Message}! Voltando ao início."); return; };
 
-            try
-            {
-                Console.WriteLine(pet);
-                await PetController.SearchPet(pet);
-            }
-            catch (Exception err)
-            {
-                Console.WriteLine($"Erro: {err.Message}!");
-            }
+            try { await PetController.SearchPet(pet); }
+            catch (Exception err) { Console.WriteLine($"Erro: {err.Message}!"); return;}
 
             Console.WriteLine($"Pet {pet} adotado com sucesso!");
-
             currentPet = PetController.currentPet!;
 
             Console.Write($"Qual o apelido do {pet}: ");
-            currentPet.nickname = Console.ReadLine()!;
+            currentPet.nickname = Console.ReadLine()!.Trim();
 
-            updatePStatusTimer.Start();
+            updatePStatusTimer!.Start();
         }
 
         private static string GetRegion()
         {
-            Console.WriteLine("Digite o nome da região:  ");
-            foreach (var item in PetController.regions) Console.WriteLine($"- {item[0].ToString().ToUpper()}{item[1..]}");
+            Console.WriteLine("Regiões disponíveis:  ");
+            foreach (var item in PetController.GetPet("regions"))
+            {
+                Console.WriteLine($"- {item[0].ToString().ToUpper()}{item[1..]}");
+            }
 
-            Console.Write(">> ");
+            Console.Write("Digite o nome da região escolhida: ");
             string region = Console.ReadLine()!.ToLower();
 
-            if (PetController.regions.Contains(region!)) return region;
+            if (PetController.GetPet("regions").Contains(region)) return region;
             else throw new Exception("Região inválida");
         }
 
         private static string GetPet(string region)
         {
             Console.WriteLine($"Iniciais de {region}:");
-            foreach (string starter in PetController.GetRegionStarter(region))
+            foreach (string starter in PetController.GetPet("starters", region))
             {
                 Console.WriteLine($"- {starter[0].ToString().ToUpper()}{starter[1..]}");
             }
+
             Console.Write("Digite o nome do pet que você quer adotar: ");
             string pet = Console.ReadLine()!.ToLower();
 
-            if (PetController.GetRegionStarter(region).Contains(pet)) return pet;
+            if (PetController.GetPet("starters", region).Contains(pet)) return pet;
             else throw new Exception("Pet inválido");
         }
+        
         private static void ShowPet()
         {
             if (currentPet == null)
@@ -151,27 +138,33 @@ namespace Pet
                 return;
             }
 
-            Console.WriteLine("Você pode ver todos os Pokemons adotados.");
-
             string nickname = currentPet!.nickname;
             string species = currentPet.Name!;
 
-            //if (currentPet!.nickname == "") Console.WriteLine($"Nome: {currentPet.Name?.ToUpper()}");
-            //else Console.WriteLine($"Nome: {currentPet.nickname} ({currentPet.Name?.ToUpper()})");
+            string name = nickname != "" ? $"{nickname} ({species})" : $"{species}";
 
-            string name = nickname != null ? $"{nickname} ({species})" : $"{species}";
             Console.WriteLine($""" 
-            Nome: {name}
+            ==========================================================================
+            NOME
+            --------------------------------------------------------------------------
+            {name}
+            ==========================================================================
+            ATRIBUTOS
+            --------------------------------------------------------------------------
             Vida:  {currentPet.Stats![0].BaseStat}
             Felicidade: {HappinesStatus(currentPet.happiness)} {currentPet.happiness}
+            Fome: {HungerStatus(currentPet.hunger)} {currentPet.happiness}
             Anos de Vida: {currentPet.age}
-
+            ==========================================================================
+            OUTROS
+            --------------------------------------------------------------------------
             Peso: {currentPet.Weight}
             Altura: {currentPet.Height}
-
+            --------------------------------------------------------------------------
             """);
         }
-        private static string HappinesStatus(double happinesLevel)
+
+        private static string HappinesStatus(int happinesLevel)
         {
             if (happinesLevel < 20) return "Muito triste";
             else if (happinesLevel < 40) return "Triste";
@@ -180,6 +173,13 @@ namespace Pet
             else return "Muito Feliz";
         }
 
+        private static string HungerStatus(int starvationLevel)
+        {
+            if (starvationLevel < 50) return "Sem fome";
+            else if (starvationLevel < 80) return "Com fome";
+            else return "Faminto";
+        }
+        
         private static void Interact()
         {
             if (currentPet == null)
@@ -208,6 +208,5 @@ namespace Pet
                     break;
             }
         }
-
     }
 }
