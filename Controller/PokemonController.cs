@@ -1,7 +1,7 @@
 using RestSharp;
 using Newtonsoft.Json;
 using System.Timers;
-using System.Reflection;
+using System.Net.Http;
 
 namespace Pet
 {
@@ -9,19 +9,16 @@ namespace Pet
     {
         public static PetModel? currentPet;
 
-
-        public static List<string> regions = new() {
-            { "kanto" },
-            { "johto" },
-            { "hoenn" },
-            { "sinnoh" },
-            { "unova" },
-            { "kalos" }
-        };
-
-        public static List<string> GetRegionStarter(string region)
+        public static List<string> GetPet(string option, string region = "")
         {
-            region = region.ToLower();
+            List<string> regions = new() {
+                { "kanto" },
+                { "johto" },
+                { "hoenn" },
+                { "sinnoh" },
+                { "unova" },
+                { "kalos" }
+            };
 
             Dictionary<string, List<string>> starters = new()
             {
@@ -33,15 +30,20 @@ namespace Pet
                 {"kalos", new List<string> {"chespin", "froakie", "fennekin"}},
             };
 
-            return starters[region];
+            if (option == "regions") return regions;
+            else if (option == "starters") return starters[region];
+            else throw new Exception("Erro: pipopi");
+
         }
+        
         public static async Task SearchPet(string pet)
         {
-            var client = new RestClient("https://pokeapi.co/api/v2/");
-            var request = new RestRequest($"pokemon/{pet}", Method.Get) { Timeout = 5000 };
-            var response = await client.GetAsync(request);
-
-            currentPet = System.Text.Json.JsonSerializer.Deserialize<PetModel>(response.Content!);
+                HttpClient client = new HttpClient();
+                Console.WriteLine("passou 1");
+                string response = await client.GetStringAsync($"https://pokeapi.co/api/v2/pokemon/{pet}");
+                Console.WriteLine("passou 2");
+                currentPet = System.Text.Json.JsonSerializer.Deserialize<PetModel>(response);
+                Console.WriteLine("passou 3");
         }
 
         public static void PlayWithPet(int maxHappinessPoint, int maxXpPoint)
@@ -67,42 +69,26 @@ namespace Pet
                 currentPet.happiness += happinessPoints;
             }
         }
-        // Ineficiente de mais, para manutenção meu deus!
-        public static Action UpdateStat(string stat, int tax)
-        {
-            Dictionary<string, Action> Update = new()
-            {
-                ["starvation"] = () => currentPet.starvation += tax,
-                ["happiness"] = () => currentPet.happiness += tax,
-            };
-
-            return Update[stat];
-        }
-
 
         public static void CheckAndHandleDeath()
         {
-            if (currentPet!.starvation == 100 | currentPet.happiness == 0)
+            if (currentPet!.hunger == 100 | currentPet.happiness == 0)
             {
                 File.Delete("petData.json");
                 Environment.Exit(0);
             }
         }
+        
         public static void UpdatePetStats(Object source, ElapsedEventArgs e)
         {
             // Erros gerados pelos eventos são suprimidos 
 
             CheckAndHandleDeath();
 
-            var updateStarvation = UpdateStat("starvation", 5);
-            updateStarvation();
-            
-            var updateHappiness = UpdateStat("happiness", 5);
-            updateHappiness();
-
-
-            Console.WriteLine("Passou 10s.");
+            currentPet!.hunger += 5;
+            currentPet!.happiness -= 5;
         }
+        
         public static bool SavePokemon(PetModel pet)
         {
             if (pet != null)
