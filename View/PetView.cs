@@ -41,6 +41,14 @@ namespace Pet
         {
             while (true)
             {
+
+                if (currentPet != null && currentPet!.alive == false)
+                {
+                    Console.WriteLine($"O {currentPet.nickname} morreu! Ele vai lembrar de você no céu.");
+                    File.Delete("petData.json");
+                    Environment.Exit(0);
+                }
+                
                 Console.Clear();
                 Console.WriteLine(
                 """
@@ -153,7 +161,7 @@ namespace Pet
             --------------------------------------------------------------------------
             Vida:  {currentPet.Stats![0].BaseStat}
             Felicidade: {HappinesStatus(currentPet.happiness)} {currentPet.happiness}
-            Fome: {HungerStatus(currentPet.hunger)} {currentPet.happiness}
+            Fome: {FoodStatus(currentPet.food)} {currentPet.food}
             Anos de Vida: {currentPet.age}
             ==========================================================================
             OUTROS
@@ -173,10 +181,11 @@ namespace Pet
             else return "Muito Feliz";
         }
 
-        private static string HungerStatus(int starvationLevel)
+        private static string FoodStatus(int foodStatus)
         {
-            if (starvationLevel < 50) return "Sem fome";
-            else if (starvationLevel < 80) return "Com fome";
+            if (foodStatus > 80) return "Cheio";
+            else if (foodStatus > 50) return "Normal";
+            else if (foodStatus > 20) return "Com fome";
             else return "Faminto";
         }
 
@@ -196,7 +205,8 @@ namespace Pet
             2. Dar banho
             3. Colocar para dormir
             4. Passear no parque
-            5. Treinar
+            5. Educar
+            6. Treinar
             
             """);
 
@@ -206,6 +216,16 @@ namespace Pet
             switch (op)
             {
                 case 1:
+                    int food = PetController.FeedPet();
+
+                    if (food == -1)
+                    {
+                        Console.WriteLine($"O {currentPet.nickname} não está com fome agora!");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"O {currentPet.nickname} recuperou {food} de alimentação.");
+                    }
                     break;
                 default:
                     break;

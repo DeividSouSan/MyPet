@@ -4,7 +4,6 @@ namespace Pet
 {
     public class PetModel
     {
-
         [JsonPropertyName("name")]
         public string? Name { get; set; }
 
@@ -20,7 +19,7 @@ namespace Pet
 
         public string nickname = "";
         public int age = 0;
-        public int hunger = 50;
+        public int food = 50;
         public int happiness = 50;
         public bool alive = true;
         public int xp = 0;
