@@ -147,41 +147,47 @@ namespace Pet
             string name = nickname != "" ? $"{nickname} ({species})" : $"{species}";
 
             Console.WriteLine($""" 
-            |==========================================================================
-            | NOME
-            |--------------------------------------------------------------------------
-            | {name}
-            |==========================================================================
-            | ATRIBUTOS
-            |--------------------------------------------------------------------------
-            | Vida:  {currentPet.Stats![0].BaseStat}
-            | Felicidade: {HappinesStatus(currentPet.happiness)} ({currentPet.happiness})
-            | Fome: {FoodStatus(currentPet.food)} ({currentPet.food})
-            | Anos de Vida: {currentPet.age}
-            |==========================================================================
-            | OUTROS
-            |--------------------------------------------------------------------------
-            | Peso: {currentPet.Weight}
-            | Altura: {currentPet.Height}
-            |--------------------------------------------------------------------------
+            |====================================================
+            | NOME                                               
+            |----------------------------------------------------
+            | {name}                                             
+            |====================================================
+            | ATRIBUTOS                                          
+            |----------------------------------------------------
+            | Vida:  {currentPet.Stats![0].BaseStat}             
+            | Felicidade: {HappinesStatus(currentPet.happiness)} 
+            | Fome: {FoodStatus(currentPet.food)}                
+            | Anos de Vida: {currentPet.age}                     
+            |====================================================
+            | OUTROS                                             
+            |----------------------------------------------------
+            | Peso: {currentPet.Weight}                          
+            | Altura: {currentPet.Height}                        
+            |----------------------------------------------------
             """);
         }
 
-        private static string HappinesStatus(int happinesLevel)
+        private static string HappinesStatus(int happinessStatus)
         {
-            if (happinesLevel < 20) return "Muito triste";
-            else if (happinesLevel < 40) return "Triste";
-            else if (happinesLevel < 60) return "Normal";
-            else if (happinesLevel < 80) return "Feliz";
-            else return "Muito Feliz";
+            string message = "";
+            if (happinessStatus < 20) message = "Muito triste 😭";
+            else if (happinessStatus < 40) message = "Triste 😟";
+            else if (happinessStatus < 60) message = "Normal 😐";
+            else if (happinessStatus < 80) message = "Feliz 😀";
+            else message = "Muito Feliz 😄";
+
+            return $"{message} ({happinessStatus})";
         }
 
         private static string FoodStatus(int foodStatus)
         {
-            if (foodStatus > 80) return "Cheio";
-            else if (foodStatus > 50) return "Normal";
-            else if (foodStatus > 20) return "Com fome";
-            else return "Faminto";
+            string message = "";
+            if (foodStatus > 80) message = "Cheio 😄";
+            else if (foodStatus > 50) message = "Normal 😐";
+            else if (foodStatus > 20) message = "Com fome 😟";
+            else message = "Faminto 😭";
+
+            return $"{message} ({foodStatus})";
         }
 
         private static void Interact()
@@ -199,9 +205,9 @@ namespace Pet
             1. 🍕 | Alimentar
             2. 🧼 | Dar banho
             3. 💤 | Colocar para dormir
-            4. 🏕️ | Passear no parque
+            4. 🏕️  | Passear no parque
             5. 🧠 | Educar
-            6. 🏋️ | Treinar
+            6. 🏋️  | Treinar
             
             """);
 
@@ -220,6 +226,17 @@ namespace Pet
                     else
                     {
                         Console.WriteLine($"O {currentPet.nickname} recuperou {food} de alimentação.");
+                    }
+                    break;
+                case 4:
+                    int happiness = PetController.PlayWithPet();
+                    if (happiness == -1)
+                    {
+                        Console.WriteLine($"O {currentPet.nickname} já está muito feliz!");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"O {currentPet.nickname} ganho {happiness} pontos de felicidade.");
                     }
                     break;
                 default:

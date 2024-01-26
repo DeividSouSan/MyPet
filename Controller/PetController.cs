@@ -45,10 +45,6 @@ namespace Pet
             Console.WriteLine("passou 3");
         }
 
-        public static void PlayWithPet(int maxHappinessPoint, int maxXpPoint)
-        {
-        }
-
         public static void CheckAndHandleDeath()
         {
             if (currentPet!.food <= 0 | currentPet.happiness <= 0)
@@ -65,11 +61,13 @@ namespace Pet
             CheckAndHandleDeath();
 
             Random deprecation = new();
-            int deprecationHunger = deprecation.Next(2, 10);
-
-            currentPet!.food -= deprecationHunger;
-
+            int deprecationFood = deprecation.Next(2, 10);
+            currentPet!.food -= deprecationFood;
             Math.Clamp(currentPet.food, 0, 100);
+
+            int deprecationHappinnes = deprecation.Next(2, 10);
+            currentPet.happiness -= deprecationHappinnes;
+            Math.Clamp(currentPet.happiness, 0, 100);
         }
 
         public static int FeedPet()
@@ -87,6 +85,24 @@ namespace Pet
                 currentPet.food += foodSatisfaction;
 
                 return foodSatisfaction;
+            }
+        }
+
+        public static int PlayWithPet()
+        {
+            if (currentPet!.happiness > 80)
+            {
+                return -1;
+            }
+            else
+            {
+                int boredLevel = 100 - (currentPet!.happiness - 1);
+                Random random = new();
+
+                int happinessPoints = random.Next(0, boredLevel);
+                currentPet.happiness += happinessPoints;
+
+                return happinessPoints;
             }
         }
 
