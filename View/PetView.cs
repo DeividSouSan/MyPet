@@ -58,10 +58,10 @@ namespace Pet
                 """);
                 Console.Write($"""
                 Olá {username}, escolha uma opção:
-                1. Adotar Pet
-                2. Ver Tamagotchis
-                3. Interagir com Tamagtchi
-                4. Sair
+                1. ➕ | Adotar
+                2. 🏠 | Ver Pet
+                3. 💬 | Interagir
+                4. 👋 | Sair
                 >> 
                 """);
                 string choice = Console.ReadLine()!;
@@ -75,7 +75,7 @@ namespace Pet
                         PetController.SavePokemon(currentPet!);
                         return;
                     default:
-                        Console.WriteLine("Seleção inválida. Tente novamente.");
+                        Console.WriteLine("🚫 Seleção inválida. Tente novamente. 🚫");
                         break;
                 }
 
@@ -196,12 +196,12 @@ namespace Pet
             Console.WriteLine($"Escolha uma atividade para fazer com {currentPet.nickname}.");
 
             Console.WriteLine("""
-            1. Alimentar
-            2. Dar banho
-            3. Colocar para dormir
-            4. Passear no parque
-            5. Educar
-            6. Treinar
+            1. 🍕 | Alimentar
+            2. 🧼 | Dar banho
+            3. 💤 | Colocar para dormir
+            4. 🏕️ | Passear no parque
+            5. 🧠 | Educar
+            6. 🏋️ | Treinar
             
             """);
 
