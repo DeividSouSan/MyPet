@@ -68,6 +68,10 @@ namespace Pet
             int deprecationHappinnes = deprecation.Next(2, 10);
             currentPet.happiness -= deprecationHappinnes;
             Math.Clamp(currentPet.happiness, 0, 100);
+
+            currentPet.happiness += InteractionStatusUpdate(currentPet.happiness);
+            Math.Clamp(currentPet.happiness, 0, 100);
+
         }
 
         public static int FeedPet()
@@ -103,6 +107,23 @@ namespace Pet
                 currentPet.happiness += happinessPoints;
 
                 return happinessPoints;
+            }
+        }
+
+        public static int InteractionStatusUpdate(int currentStatus)
+        {
+            if (currentStatus > 80)
+            {
+                return -1;
+            }
+            else
+            {
+                int differencePoints = 100 - (currentStatus - 1);
+                Random random = new();
+
+                int recoveryPoints = random.Next(0, differencePoints);
+
+                return recoveryPoints;
             }
         }
 
