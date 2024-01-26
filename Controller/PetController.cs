@@ -1,5 +1,6 @@
 using Newtonsoft.Json;
 using System.Timers;
+using Pet;
 
 namespace Pet
 {
@@ -53,6 +54,7 @@ namespace Pet
             if (currentPet!.food <= 0 | currentPet.happiness <= 0)
             {
                 currentPet.alive = false;
+                UserInterface.DeathWarning();
             }
         }
 

@@ -42,13 +42,8 @@ namespace Pet
             while (true)
             {
 
-                if (currentPet != null && currentPet!.alive == false)
-                {
-                    Console.WriteLine($"O {currentPet.nickname} morreu! Ele vai lembrar de você no céu.");
-                    File.Delete("petData.json");
-                    Environment.Exit(0);
-                }
-                
+
+
                 Console.Clear();
                 Console.WriteLine(
                 """
@@ -152,23 +147,23 @@ namespace Pet
             string name = nickname != "" ? $"{nickname} ({species})" : $"{species}";
 
             Console.WriteLine($""" 
-            ==========================================================================
-            NOME
-            --------------------------------------------------------------------------
-            {name}
-            ==========================================================================
-            ATRIBUTOS
-            --------------------------------------------------------------------------
-            Vida:  {currentPet.Stats![0].BaseStat}
-            Felicidade: {HappinesStatus(currentPet.happiness)} {currentPet.happiness}
-            Fome: {FoodStatus(currentPet.food)} {currentPet.food}
-            Anos de Vida: {currentPet.age}
-            ==========================================================================
-            OUTROS
-            --------------------------------------------------------------------------
-            Peso: {currentPet.Weight}
-            Altura: {currentPet.Height}
-            --------------------------------------------------------------------------
+            |==========================================================================
+            | NOME
+            |--------------------------------------------------------------------------
+            | {name}
+            |==========================================================================
+            | ATRIBUTOS
+            |--------------------------------------------------------------------------
+            | Vida:  {currentPet.Stats![0].BaseStat}
+            | Felicidade: {HappinesStatus(currentPet.happiness)} ({currentPet.happiness})
+            | Fome: {FoodStatus(currentPet.food)} ({currentPet.food})
+            | Anos de Vida: {currentPet.age}
+            |==========================================================================
+            | OUTROS
+            |--------------------------------------------------------------------------
+            | Peso: {currentPet.Weight}
+            | Altura: {currentPet.Height}
+            |--------------------------------------------------------------------------
             """);
         }
 
@@ -230,6 +225,13 @@ namespace Pet
                 default:
                     break;
             }
+        }
+
+        public static void DeathWarning()
+        {
+            Console.WriteLine($"O {currentPet!.nickname} morreu! Ele vai lembrar de você no céu.");
+            File.Delete("petData.json");
+            Environment.Exit(0);
         }
     }
 }
