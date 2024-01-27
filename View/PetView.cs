@@ -208,7 +208,6 @@ namespace Pet
             4. 🏕️  | Passear no parque
             5. 🧠 | Educar
             6. 🏋️  | Treinar
-            
             """);
 
             Console.Write(">> ");
@@ -217,27 +216,18 @@ namespace Pet
             switch (op)
             {
                 case 1:
-                    int food = PetController.FeedPet();
+                    int food = PetController.InteractionStatusUpdate(currentPet.food);
 
-                    if (food == -1)
-                    {
-                        Console.WriteLine($"O {currentPet.nickname} não está com fome agora!");
-                    }
-                    else
-                    {
-                        Console.WriteLine($"O {currentPet.nickname} recuperou {food} de alimentação.");
-                    }
+                    if (food == -1) Console.WriteLine($"O {currentPet.nickname} não está com fome agora!");
+                    else Console.WriteLine($"O {currentPet.nickname} recuperou {food} de alimentação.");
+
                     break;
                 case 4:
-                    int happiness = PetController.PlayWithPet();
-                    if (happiness == -1)
-                    {
-                        Console.WriteLine($"O {currentPet.nickname} já está muito feliz!");
-                    }
-                    else
-                    {
-                        Console.WriteLine($"O {currentPet.nickname} ganho {happiness} pontos de felicidade.");
-                    }
+                    int happiness = PetController.InteractionStatusUpdate(currentPet.happiness);
+
+                    if (happiness == -1) Console.WriteLine($"O {currentPet.nickname} já está muito feliz!");
+                    else Console.WriteLine($"O {currentPet.nickname} ganho {happiness} pontos de felicidade.");
+
                     break;
                 default:
                     break;
