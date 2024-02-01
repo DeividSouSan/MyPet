@@ -4,43 +4,12 @@ using Pet;
 
 namespace Pet
 {
+    /// <summary>
+    /// This class will controll all the atributes or properties of instances of PetModel.
+    /// </summary>
     public class PetController
     {
         public static PetModel? currentPet;
-
-        public static List<string> GetPet(string option, string region = "")
-        {
-            List<string> regions = new() {
-                { "kanto" },
-                { "johto" },
-                { "hoenn" },
-                { "sinnoh" },
-                { "unova" },
-                { "kalos" }
-            };
-
-            Dictionary<string, List<string>> starters = new()
-            {
-                {"kanto", new List<string> {"bulbasaur","squirtle","charmander"} },
-                {"johto", new List<string> {"totodile","chikorita","cyndaquil"} },
-                {"hoenn", new List<string> {"mudkip","treecko","torchic"} },
-                {"sinnoh",new List<string> { "piplup","turtwig","chimchar"} },
-                {"unova", new List<string> {"oshwatt","snivy","tepig"} },
-                {"kalos", new List<string> {"chespin", "froakie", "fennekin"}},
-            };
-
-            if (option == "regions") return regions;
-            else if (option == "starters") return starters[region];
-            else throw new Exception("Erro: pipopi");
-
-        }
-
-        public static async Task SearchPet(string pet)
-        {
-            HttpClient client = new HttpClient();
-            string response = await client.GetStringAsync($"https://pokeapi.co/api/v2/pokemon/{pet}");
-            currentPet = System.Text.Json.JsonSerializer.Deserialize<PetModel>(response);
-        }
 
         public static void CheckAndHandleDeath()
         {
@@ -59,17 +28,14 @@ namespace Pet
 
             Random deprecation = new();
 
-            currentPet.food -= deprecation.Next(2, 10);
+            currentPet!.food -= deprecation.Next(2, 10);
             Math.Clamp(currentPet.food, 0, 100);
 
             currentPet.happiness -= deprecation.Next(2, 10);
             Math.Clamp(currentPet.happiness, 0, 100);
 
-            DeprecationStatusUpdate("food", {2, 10})
-
-            // Se eu conseguisse acessar um objeto através de uma string acho que daria certo
         }
-
+/*
         public static int DeprecationStatusUpdate(string status, List<int> range)
         {
             // Preciso dar um jeito de conseguir atualizar o status do pokemmon somente com essa função
@@ -92,7 +58,7 @@ namespace Pet
                 else 20;
             }
         }
-
+*/
         public static bool SavePokemon(PetModel pet)
         {
             if (pet != null)
