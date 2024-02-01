@@ -86,18 +86,19 @@ namespace Pet
 
         private static async Task AdoptPet()
         {
-            string? pet, region;
-
-            try { region = GetRegion(); pet = GetPet(region); }
+            // Gets the "pet" name.
+            string region, starter;
+            try { region = GetRegion(); starter = GetStarter(region); }
             catch (Exception err) { Console.WriteLine($"Erro: {err.Message}! Voltando ao início."); return; };
 
-            try { await PetController.SearchPet(pet); }
+            // Try to request PokeAPI.
+            try { await AdoptionService.SearchPet(starter); }
             catch (Exception err) { Console.WriteLine($"Erro: {err.Message}!"); return; }
 
-            Console.WriteLine($"Pet {pet} adotado com sucesso!");
+            Console.WriteLine($"Pet {starter} adotado com sucesso!");
             currentPet = PetController.currentPet!;
 
-            Console.Write($"Qual o apelido do {pet}: ");
+            Console.Write($"Qual o apelido do {starter}: ");
             currentPet.nickname = Console.ReadLine()!.Trim();
 
             updatePStatusTimer!.Start();
@@ -105,8 +106,17 @@ namespace Pet
 
         private static string GetRegion()
         {
+            List<string> regions = new() {
+                { "kanto" },
+                { "johto" },
+                { "hoenn" },
+                { "sinnoh" },
+                { "unova" },
+                { "kalos" }
+            };
+
             Console.WriteLine("Regiões disponíveis:  ");
-            foreach (var item in PetController.GetPet("regions"))
+            foreach (var item in regions)
             {
                 Console.WriteLine($"- {item[0].ToString().ToUpper()}{item[1..]}");
             }
@@ -114,22 +124,32 @@ namespace Pet
             Console.Write("Digite o nome da região escolhida: ");
             string region = Console.ReadLine()!.ToLower();
 
-            if (PetController.GetPet("regions").Contains(region)) return region;
+            if (regions.Contains(region)) return region;
             else throw new Exception("Região inválida");
         }
 
-        private static string GetPet(string region)
+        private static string GetStarter(string region)
         {
+            Dictionary<string, List<string>> starters = new()
+            {
+                {"kanto", new List<string> {"bulbasaur","squirtle","charmander"} },
+                {"johto", new List<string> {"totodile","chikorita","cyndaquil"} },
+                {"hoenn", new List<string> {"mudkip","treecko","torchic"} },
+                {"sinnoh",new List<string> {"piplup","turtwig","chimchar"} },
+                {"unova", new List<string> {"oshwatt","snivy","tepig"} },
+                {"kalos", new List<string> {"chespin", "froakie", "fennekin"}},
+            };
+
             Console.WriteLine($"Iniciais de {region}:");
-            foreach (string starter in PetController.GetPet("starters", region))
+            foreach (string starter in starters[region])
             {
                 Console.WriteLine($"- {starter[0].ToString().ToUpper()}{starter[1..]}");
             }
 
             Console.Write("Digite o nome do pet que você quer adotar: ");
-            string pet = Console.ReadLine()!.ToLower();
+            string choosenOne= Console.ReadLine()!.ToLower();
 
-            if (PetController.GetPet("starters", region).Contains(pet)) return pet;
+            if (starters[region].Contains(choosenOne)) return choosenOne;
             else throw new Exception("Pet inválido");
         }
 
@@ -208,40 +228,31 @@ namespace Pet
             4. 🏕️  | Passear no parque
             5. 🧠 | Educar
             6. 🏋️  | Treinar
-            
             """);
 
             Console.Write(">> ");
             int op = int.Parse(Console.ReadLine()!);
-
+/*
             switch (op)
             {
                 case 1:
-                    int food = PetController.FeedPet();
+                    int food = PetController.InteractionStatusUpdate(currentPet.food);
 
-                    if (food == -1)
-                    {
-                        Console.WriteLine($"O {currentPet.nickname} não está com fome agora!");
-                    }
-                    else
-                    {
-                        Console.WriteLine($"O {currentPet.nickname} recuperou {food} de alimentação.");
-                    }
+                    if (food == -1) Console.WriteLine($"O {currentPet.nickname} não está com fome agora!");
+                    else Console.WriteLine($"O {currentPet.nickname} recuperou {food} de alimentação.");
+
                     break;
                 case 4:
-                    int happiness = PetController.PlayWithPet();
-                    if (happiness == -1)
-                    {
-                        Console.WriteLine($"O {currentPet.nickname} já está muito feliz!");
-                    }
-                    else
-                    {
-                        Console.WriteLine($"O {currentPet.nickname} ganho {happiness} pontos de felicidade.");
-                    }
+                    int happiness = PetController.InteractionStatusUpdate(currentPet.happiness);
+
+                    if (happiness == -1) Console.WriteLine($"O {currentPet.nickname} já está muito feliz!");
+                    else Console.WriteLine($"O {currentPet.nickname} ganho {happiness} pontos de felicidade.");
+
                     break;
                 default:
                     break;
             }
+            */
         }
 
         public static void DeathWarning()

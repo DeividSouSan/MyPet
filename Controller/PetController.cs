@@ -4,46 +4,12 @@ using Pet;
 
 namespace Pet
 {
+    /// <summary>
+    /// This class will controll all the atributes or properties of instances of PetModel.
+    /// </summary>
     public class PetController
     {
         public static PetModel? currentPet;
-
-        public static List<string> GetPet(string option, string region = "")
-        {
-            List<string> regions = new() {
-                { "kanto" },
-                { "johto" },
-                { "hoenn" },
-                { "sinnoh" },
-                { "unova" },
-                { "kalos" }
-            };
-
-            Dictionary<string, List<string>> starters = new()
-            {
-                {"kanto", new List<string> {"bulbasaur","squirtle","charmander"} },
-                {"johto", new List<string> {"totodile","chikorita","cyndaquil"} },
-                {"hoenn", new List<string> {"mudkip","treecko","torchic"} },
-                {"sinnoh",new List<string> { "piplup","turtwig","chimchar"} },
-                {"unova", new List<string> {"oshwatt","snivy","tepig"} },
-                {"kalos", new List<string> {"chespin", "froakie", "fennekin"}},
-            };
-
-            if (option == "regions") return regions;
-            else if (option == "starters") return starters[region];
-            else throw new Exception("Erro: pipopi");
-
-        }
-
-        public static async Task SearchPet(string pet)
-        {
-            HttpClient client = new HttpClient();
-            Console.WriteLine("passou 1");
-            string response = await client.GetStringAsync($"https://pokeapi.co/api/v2/pokemon/{pet}");
-            Console.WriteLine("passou 2");
-            currentPet = System.Text.Json.JsonSerializer.Deserialize<PetModel>(response);
-            Console.WriteLine("passou 3");
-        }
 
         public static void CheckAndHandleDeath()
         {
@@ -61,51 +27,38 @@ namespace Pet
             CheckAndHandleDeath();
 
             Random deprecation = new();
-            int deprecationFood = deprecation.Next(2, 10);
-            currentPet!.food -= deprecationFood;
+
+            currentPet!.food -= deprecation.Next(2, 10);
             Math.Clamp(currentPet.food, 0, 100);
 
-            int deprecationHappinnes = deprecation.Next(2, 10);
-            currentPet.happiness -= deprecationHappinnes;
+            currentPet.happiness -= deprecation.Next(2, 10);
             Math.Clamp(currentPet.happiness, 0, 100);
+
+        }
+/*
+        public static int DeprecationStatusUpdate(string status, List<int> range)
+        {
+            // Preciso dar um jeito de conseguir atualizar o status do pokemmon somente com essa função
+            Random deprecation = new();
+            int min = range[0]
+            int max = range[0]
+            currentPet.status -= deprecation.Next(min, max)
         }
 
-        public static int FeedPet()
+        public static int InteractionStatusUpdate(int currentStatus)
         {
-            if (currentPet!.food > 80)
-            {
-                return -1;
-            }
+            // Preciso dar um jeito de conseguir atualizar o status do pokemmon somente com essa função
+            if (currentStatus > 80) return -1;
             else
             {
-                int hunger = 100 - (currentPet!.food - 1);
-                Random food = new();
-
-                int foodSatisfaction = food.Next(0, hunger);
-                currentPet.food += foodSatisfaction;
-
-                return foodSatisfaction;
-            }
-        }
-
-        public static int PlayWithPet()
-        {
-            if (currentPet!.happiness > 80)
-            {
-                return -1;
-            }
-            else
-            {
-                int boredLevel = 100 - (currentPet!.happiness - 1);
+                int rewardAmplitude = 100 - (currentStatus);
                 Random random = new();
 
-                int happinessPoints = random.Next(0, boredLevel);
-                currentPet.happiness += happinessPoints;
-
-                return happinessPoints;
+                if (rewardExtent >= 10) random.Next(10, rewardExtent);
+                else 20;
             }
         }
-
+*/
         public static bool SavePokemon(PetModel pet)
         {
             if (pet != null)
