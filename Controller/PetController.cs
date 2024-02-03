@@ -59,26 +59,5 @@ namespace Pet
             }
         }
 */
-        public static bool SavePokemon(PetModel pet)
-        {
-            if (pet != null)
-            {
-                var petData = JsonConvert.SerializeObject(pet);
-                File.WriteAllText("petData.json", petData);
-                return true;
-            }
-            else return false;
-        }
-
-        public static bool LoadPokemon()
-        {
-            try
-            {
-                string dataFromFile = File.ReadAllText("petData.json");
-                currentPet = JsonConvert.DeserializeObject<PetModel>(dataFromFile);
-                return true;
-            }
-            catch { return false; }
-        }
     }
 }
