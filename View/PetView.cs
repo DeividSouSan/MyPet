@@ -23,20 +23,29 @@ namespace Pet
 
         public void LoadPet()
         {
-            bool saveFileExists = PetController.LoadPokemon();
+            bool savefileExists = SaveLoadService.LoadPet();
 
-            if (saveFileExists)
+            if (savefileExists)
             {
                 Console.Write("Arquivo de Pet encontrado. Carregar? [s/n]");
-                string retrieveSaveFile = Console.ReadLine()!;
+                string loadSavefile = Console.ReadLine()!.ToLower(); ;
 
-                if (retrieveSaveFile == "s")
+                if (loadSavefile == "s")
                 {
                     currentPet = PetController.currentPet!;
                     updatePStatusTimer!.Start();
                 }
+                else if (loadSavefile == "n")
+                {
+                    Console.WriteLine("Arquivo de Pet não carregado.");
+                }
+                else
+                {
+                    Console.WriteLine("Opção inválida. Arquivo de Pet não carregado.");
+                }
             }
         }
+
         public async Task StartGame()
         {
             while (true)
@@ -72,7 +81,7 @@ namespace Pet
                     case "2": ShowPet(); break;
                     case "3": Interact(); break;
                     case "4":
-                        PetController.SavePokemon(currentPet!);
+                        SaveLoadService.SavePet(currentPet!);
                         return;
                     default:
                         Console.WriteLine("🚫 Seleção inválida. Tente novamente. 🚫");
@@ -147,7 +156,7 @@ namespace Pet
             }
 
             Console.Write("Digite o nome do pet que você quer adotar: ");
-            string choosenOne= Console.ReadLine()!.ToLower();
+            string choosenOne = Console.ReadLine()!.ToLower();
 
             if (starters[region].Contains(choosenOne)) return choosenOne;
             else throw new Exception("Pet inválido");
@@ -232,27 +241,27 @@ namespace Pet
 
             Console.Write(">> ");
             int op = int.Parse(Console.ReadLine()!);
-/*
-            switch (op)
-            {
-                case 1:
-                    int food = PetController.InteractionStatusUpdate(currentPet.food);
+            /*
+                        switch (op)
+                        {
+                            case 1:
+                                int food = PetController.InteractionStatusUpdate(currentPet.food);
 
-                    if (food == -1) Console.WriteLine($"O {currentPet.nickname} não está com fome agora!");
-                    else Console.WriteLine($"O {currentPet.nickname} recuperou {food} de alimentação.");
+                                if (food == -1) Console.WriteLine($"O {currentPet.nickname} não está com fome agora!");
+                                else Console.WriteLine($"O {currentPet.nickname} recuperou {food} de alimentação.");
 
-                    break;
-                case 4:
-                    int happiness = PetController.InteractionStatusUpdate(currentPet.happiness);
+                                break;
+                            case 4:
+                                int happiness = PetController.InteractionStatusUpdate(currentPet.happiness);
 
-                    if (happiness == -1) Console.WriteLine($"O {currentPet.nickname} já está muito feliz!");
-                    else Console.WriteLine($"O {currentPet.nickname} ganho {happiness} pontos de felicidade.");
+                                if (happiness == -1) Console.WriteLine($"O {currentPet.nickname} já está muito feliz!");
+                                else Console.WriteLine($"O {currentPet.nickname} ganho {happiness} pontos de felicidade.");
 
-                    break;
-                default:
-                    break;
-            }
-            */
+                                break;
+                            default:
+                                break;
+                        }
+                        */
         }
 
         public static void DeathWarning()
