@@ -13,6 +13,7 @@
 *.userosscache
 *.sln.docstates
 savefile/
+savefile.json
 regras.txt
 
 # User-specific files (MonoDevelop/Xamarin Studio)
