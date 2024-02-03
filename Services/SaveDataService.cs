@@ -17,7 +17,7 @@ namespace Pet
             if (pet != null)
             {
                 var petData = JsonConvert.SerializeObject(pet);
-                File.WriteAllText("savefile.json", petData);
+                File.WriteAllText("savefile/savefile.json", petData);
                 return true;
             }
             else return false;
@@ -31,7 +31,7 @@ namespace Pet
         {
             try
             {
-                string dataFromFile = File.ReadAllText("savefile.json");
+                string dataFromFile = File.ReadAllText("savefile/savefile.json");
                 PetController.currentPet = JsonConvert.DeserializeObject<PetModel>(dataFromFile);
                 return true;
             }
