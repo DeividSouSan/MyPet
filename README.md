@@ -1,30 +1,10 @@
-# Tamagochimon
+# MyPet
 
 O MyPet é um Console Application cujo objetivo é simular um bichinho virtual. Nele você pode adotar e cuidar do seu bichinho para que ele não morra.
 
+![imagem1](https://github.com/DeividSouSan/tamagochimon/assets/49818020/93d07558-873d-439a-860b-81ee7a5cc4a7)
 
-## Como funciona o jogo
-O jogo é uma cópio do Tamagotchi, ou seja, você tem um bichinho virtual que no nosso caso e possui as seguintes opções:
 
-- Adotar os Pokemon iniciais de cada regia
-- Ver informações dos Pokemon adotados
-- Interagir com o Pokemon
-
-Basta você selecionar as opções através do menu e com a passagem do tempo ir cuidade do seu mascote, impedindo que ele morra.
-
-## Como foi feito
-Foi utilizado
-
-- C# com .Net
-- PokeAPI
-- RestSharp
-
-- Arquitetura MVC
-- Princípio da Responsabilidade Únicado do SOLID
-
-## Funcionalidades Interessantes
-- Se você possuir um bichinho e sair do jogo ele será salvo em uma arquivo e ao entrar novamente poderá continuar com o mesmo mascote.
-
-- O jogo possui um timer que inicia em duas ocasiões:
-    1 - Você adotou um mascote
-    2 - Você carregou o arquivo de um mascote
+![CSharp Badge](https://img.shields.io/badge/C%23-239120?style=for-the-badge&logo=csharp&logoColor=white)
+![DotNet Badge](https://img.shields.io/badge/.NET-512BD4?style=for-the-badge&logo=dotnet&logoColor=white)
+![VSCode Badge](https://img.shields.io/badge/VSCode-0078D4?style=for-the-badge&logo=visual%20studio%20code&logoColor=white)
